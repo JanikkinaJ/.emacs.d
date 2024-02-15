@@ -1,28 +1,130 @@
 #+TITLE: My Emacs Configuration
-#+AUTHOR: Kineye
-#+OPTIONS: num:nil
+#+PROPERTY: header-args :tangle config.el
 
-* Package management
+** INFO
 
 create source blocks with ~org-insert-structure-template~ Keybinding: ~(C-c C-,)~
-#+begin_src emacs-elisp
-;; setup straight https://github.com/radian-software/straight.el
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name
-        "straight/repos/straight.el/bootstrap.el"
-        (or (bound-and-true-p straight-base-dir)
-            user-emacs-directory)))
-      (bootstrap-version 7))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
+~C-c C-c~ on tangle header activates it if it isn't working
 
-;; use straight automatically when using use-package 
-(setq straight-use-package-by-default t)
+** Package management
+Uses straight for fast lazy loading with use-package automatically using straight
+This I will keep in the init.el for now though so it loads first.
+
+** Basic changes
+#+begin_src emacs-lisp
+  ;; Don't show the splash screen
+  (setq inhibit-startup-message t)
+
+  ;; change the look
+  (tool-bar-mode -1) ; remove tool bar
+  (scroll-bar-mode -1) ; remove scroll bar
+  (global-display-line-numbers-mode 1)
+  (set-face-attribute 'default nil :height 170) ;;(height / 10 = normal font)
+
+  ;; enable recent files
+  (recentf-mode 1)
+  (setq recentf-max-menu-items 25)
+  (setq recentf-max-saved-items 25)
 #+end_src
+
+** Theme
+#+begin_src emacs-lisp 
+  ;; theme
+  (use-package exotica-theme)
+  (load-theme 'exotica t)
+#+end_src
+
+** evil vim
+#+begin_src emacs-lisp 
+  ;; ======== https://github.com/emacs-evil/evil
+  ;; evil vim
+  ;; ========
+  (unless (package-installed-p 'evil)
+    (use-package evil))
+
+  ;; required packages
+  (use-package goto-chg)
+  (require 'evil)
+  (evil-mode 1)
+
+#+end_src
+
+** Ivy (completion)
+#+begin_src emacs-lisp
+  ;; Ivy (completion) https://github.com/abo-abo/swiper
+  (use-package ivy)
+  (use-package counsel)
+  (ivy-mode)
+  (counsel-mode)
+#+end_src
+
+** Personal functions
+#+begin_src emacs-lisp
+  ;; personal functions
+  (defun reload-config ()
+    (interactive)
+    (load-file "~/.emacs.d/init.el"))
+
+  (defun edit-config ()
+    (interactive
+    (find-file "~/.emacs.d/init.el")))
+#+end_src
+
+** which key
+#+begin_src emacs-lisp
+  ;; ========= https://github.com/justbur/emacs-which-key
+  ;; which key
+  ;; =========
+  (use-package which-key)
+  (require 'which-key)
+  (which-key-mode)
+#+end_src
+
+** Windswap
+#+begin_src emacs-lisp
+  ;; Windswap
+  (use-package windswap)
+  (windmove-default-keybindings 'control)
+  (windswap-default-keybindings 'control 'shift)
+  ; basically ctrl direction moves to that window, with shift moves that window there
+#+end_src
+
+** Keybindings
+#+begin_src emacs-lisp
+  ;; new keybindings
+  (use-package general)
+
+  (general-create-definer my-leader-def
+    :prefix "SPC")
+
+  (my-leader-def
+    :keymaps 'normal
+    ;; bind "SPC a"
+    "f s" 'save-buffer
+    "." 'find-file
+    "f r" 'recentf-open
+    ;; window commands
+    "w d" 'evil-window-delete
+    "w H" 'evil-window-split 
+    "w v" 'evil-window-vsplit
+    "w j" 'evil-window-up
+    "w k" 'evil-window-down
+    "w h" 'evil-window-left
+    "w l" 'evil-window-right
+    ;; config commands
+    "c r" 'reload-config
+    "c e" 'edit-config)
+
+  ;; change which key description
+  (which-key-add-key-based-replacements
+    "SPC f" "files")
+  (which-key-add-key-based-replacements
+    "SPC c" "config")
+  (which-key-add-key-based-replacements
+    "SPC w" "window")
+
+#+end_src
+
+;;; Local Variables: ***
+;;; eval: (add-hook 'after-save-hook #'org-babel-tangle nil t) ***
+;;; End: ***
