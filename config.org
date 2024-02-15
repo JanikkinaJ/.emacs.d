@@ -4,7 +4,7 @@
 ** INFO
 
 create source blocks with ~org-insert-structure-template~ Keybinding: ~(C-c C-,)~
-~C-c C-c~ on tangle header activates it if it isn't working
+~C-c C-c~ on tangle header activates it if it isn't working.
 
 ** Package management
 Uses straight for fast lazy loading with use-package automatically using straight
@@ -25,13 +25,15 @@ This I will keep in the init.el for now though so it loads first.
   (recentf-mode 1)
   (setq recentf-max-menu-items 25)
   (setq recentf-max-saved-items 25)
+
+  ;;(setq org-src-preserve-indentation t)
 #+end_src
 
 ** Theme
 #+begin_src emacs-lisp 
   ;; theme
-  (use-package exotica-theme)
-  (load-theme 'exotica t)
+  (use-package doom-themes)
+  (load-theme 'doom-moonlight t)
 #+end_src
 
 ** evil vim
@@ -39,8 +41,9 @@ This I will keep in the init.el for now though so it loads first.
   ;; ======== https://github.com/emacs-evil/evil
   ;; evil vim
   ;; ========
-  (unless (package-installed-p 'evil)
-    (use-package evil))
+(use-package evil
+     :init (setq evil-want-C-i-jump nil)
+     :config (evil-mode))
 
   ;; required packages
   (use-package goto-chg)
@@ -58,6 +61,21 @@ This I will keep in the init.el for now though so it loads first.
   (counsel-mode)
 #+end_src
 
+** vterm
+#+begin_src emacs-lisp
+   (use-package vterm
+   :ensure t)
+  ;; ensure that vterm has no line numbers
+
+
+  (add-hook 'vterm-mode-hook (lambda() (display-line-numbers-mode -1))) 
+#+end_src
+
+** magit
+#+begin_src emacs-lisp
+    (use-package magit)
+#+end_src
+
 ** Personal functions
 #+begin_src emacs-lisp
   ;; personal functions
@@ -67,7 +85,7 @@ This I will keep in the init.el for now though so it loads first.
 
   (defun edit-config ()
     (interactive
-    (find-file "~/.emacs.d/init.el")))
+    (find-file "~/.emacs.d/config.org")))
 #+end_src
 
 ** which key
@@ -92,14 +110,24 @@ This I will keep in the init.el for now though so it loads first.
 ** Keybindings
 #+begin_src emacs-lisp
   ;; new keybindings
-  (use-package general)
+  (use-package general
+    :after evil
+    :config
+    (general-override-mode)
+    )
+  (require 'general)
 
   (general-create-definer my-leader-def
-    :prefix "SPC")
+    :states '(normal motion)
+    :keymaps 'override
+    :prefix "SPC"
+    )
 
+  ;; magit uses emacs mode so emacs is important to override magit
   (my-leader-def
-    :keymaps 'normal
-    ;; bind "SPC a"
+    :states '(emacs normal)
+    :keymaps 'override
+    ;; files
     "f s" 'save-buffer
     "." 'find-file
     "f r" 'recentf-open
@@ -113,7 +141,13 @@ This I will keep in the init.el for now though so it loads first.
     "w l" 'evil-window-right
     ;; config commands
     "c r" 'reload-config
-    "c e" 'edit-config)
+    "c e" 'edit-config
+    ;; vterm
+    "o t" 'vterm-other-window
+    "g g" 'magit-status
+    "g d" 'magit-dispatch
+    "g f" 'magit-file-dispatch
+    )
 
   ;; change which key description
   (which-key-add-key-based-replacements
@@ -122,7 +156,8 @@ This I will keep in the init.el for now though so it loads first.
     "SPC c" "config")
   (which-key-add-key-based-replacements
     "SPC w" "window")
-
+  (which-key-add-key-based-replacements
+    "SPC o" "vterm")
 #+end_src
 
 ;;; Local Variables: ***

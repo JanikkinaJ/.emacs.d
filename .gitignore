@@ -4,3 +4,4 @@ auto-save-list
 smex-items
 straight
 config.el
+transient
