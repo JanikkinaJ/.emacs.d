@@ -20,6 +20,8 @@ This I will keep in the init.el for now though so it loads first.
   (scroll-bar-mode -1) ; remove scroll bar
   (menu-bar-mode -1) ; remove menu bar
   (global-display-line-numbers-mode 1)
+  (add-to-list 'default-frame-alist '(font . "Hack Nerd Font" ))
+  (set-face-attribute 'default t :font "Hack Nerd Font" )
   (set-face-attribute 'default nil :height 170) ;;(height / 10 = normal font)
 
   ;; enable recent files
@@ -40,6 +42,14 @@ This I will keep in the init.el for now though so it loads first.
   (load-theme 'doom-snazzy t)
   ;; (load-theme 'doom-wilmersdorf t)
   ;; (load-theme 'doom-outrun-electric t)
+#+end_src
+
+** doom modeline
+https://github.com/seagle0128/doom-modeline
+#+begin_src emacs-lisp
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1))
 #+end_src
 
 ** evil vim
