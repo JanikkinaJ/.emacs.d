@@ -2,7 +2,7 @@
 #+PROPERTY: header-args :tangle config.el
 #+OPTIONS: toc:2
 
-** TABLE OF CONTENT :toc:
+** TABLE OF CONTENTS                                                    :toc:
   - [[#info][INFO]]
   - [[#package-management][Package management]]
   - [[#basic-changes][Basic changes]]
@@ -381,7 +381,7 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
     "t RET" 'treemacs-root-down
 #+end_src
 
-*** org roam
+*** org roam keybindings
 #+begin_src emacs-lisp
     "r n f" 'org-roam-node-find
     "r n i" 'org-roam-node-insert
@@ -389,6 +389,7 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
     "r d y" 'org-roam-dailies-capture-yesterday
     "r d t" 'org-roam-dailies-capture-tomorrow
     "r d n" 'org-roam-dailies-capture-today
+    "r d g" 'org-roam-dailies-goto-today
 #+end_src
 
 *** pers mode keybindings
