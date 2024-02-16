@@ -2,9 +2,9 @@
 #+PROPERTY: header-args :tangle config.el
 
 ** INFO
-
 create source blocks with ~org-insert-structure-template~ Keybinding: ~(C-c C-,)~
 ~C-c C-c~ on tangle header activates it if it isn't working.
+To edit the current source block in new buffer use ~C-c '~
 
 ** Package management
 Uses straight for fast lazy loading with use-package automatically using straight
@@ -20,16 +20,14 @@ This I will keep in the init.el for now though so it loads first.
   (scroll-bar-mode -1) ; remove scroll bar
   (menu-bar-mode -1) ; remove menu bar
   (global-display-line-numbers-mode 1)
-  (add-to-list 'default-frame-alist '(font . "Hack Nerd Font" ))
-  (set-face-attribute 'default t :font "Hack Nerd Font" )
-  (set-face-attribute 'default nil :height 170) ;;(height / 10 = normal font)
 
   ;; enable recent files
   (recentf-mode 1)
   (setq recentf-max-menu-items 25)
   (setq recentf-max-saved-items 25)
 
-  (setq org-src-preserve-indentation t)
+  ;;(setq org-src-preserve-indentation t)
+  (setq org-src-tab-acts-natively t)
 #+end_src
 
 ** Theme
@@ -92,7 +90,7 @@ https://github.com/seagle0128/doom-modeline
   :bind
   ("C-x C-b" . persp-list-buffers)         ; or use a nicer switcher, see below
   :custom
-  (persp-mode-prefix-key (kbd "C-c M-p"))  ; pick your own prefix key here
+  (persp-mode-prefix-key (kbd "C-c M-p"))  ; will be changed later
   :init
   (persp-mode))
 #+end_src
@@ -174,6 +172,12 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
   :after lsp)
 #+end_src
 
+*** enable docker syntax highlighting
+#+begin_src emacs-lisp
+  (use-package dockerfile-mode)
+#+end_src
+
+*** enable company
 #+begin_src emacs-lisp
   ;; http://company-mode.github.io/
   (use-package company)
@@ -189,6 +193,7 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
   (use-package counsel)
   (ivy-mode)
   (counsel-mode)
+  (setq ivy-initial-inputs-alist nil) ;; removes annoying ^ from commands
 #+end_src
 
 ** vterm
@@ -232,9 +237,7 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
 
 ** which key
 #+begin_src emacs-lisp
-  ;; ========= https://github.com/justbur/emacs-which-key
-  ;; which key
-  ;; =========
+  ;; https://github.com/justbur/emacs-which-key
   (use-package which-key)
   (require 'which-key)
   (which-key-mode)
@@ -242,10 +245,11 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
 
 ** Windswap
 #+begin_src emacs-lisp
-  ;; Windswap
-  (use-package windswap)
-  (windmove-default-keybindings 'control)
-  (windswap-default-keybindings 'control 'shift)
+  ;; Windmove
+  (global-set-key (kbd "C-c <left>")  'windmove-left)
+  (global-set-key (kbd "C-c <right>") 'windmove-right)
+  (global-set-key (kbd "C-c <up>")    'windmove-up)
+  (global-set-key (kbd "C-c <down>")  'windmove-down)
   ; basically ctrl direction moves to that window, with shift moves that window there
 #+end_src
 
@@ -342,7 +346,6 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
     "SPC g" "magit")
   (which-key-add-key-based-replacements
     "SPC t" "treemacs")
-
 #+end_src
 
 ;;; Local Variables: ***

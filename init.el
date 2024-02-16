@@ -1,4 +1,8 @@
-;; setup straight https://github.com/radian-software/straight.el
+;; set here to avoid small font when loading
+(add-to-list 'default-frame-alist '(font . "Hack Nerd Font-17" ))
+(set-face-attribute 'default t :font "Hack Nerd Font-17" )
+
+;;; setup straight https://github.com/radian-software/straight.el
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name
@@ -15,8 +19,9 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-;; use straight automatically when using use-package 
+;; use straight automatically when using use-package
 (setq straight-use-package-by-default t)
+
 
 ;; load actual config
 (load (locate-user-emacs-file "config.el"))
