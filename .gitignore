@@ -11,3 +11,5 @@ elpa
 .cache/
 *#
 .lsp-*
+.org-id-locations
+bookmarks

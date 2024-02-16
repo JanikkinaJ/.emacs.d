@@ -44,6 +44,11 @@ This I will keep in the init.el for now though so it loads first.
   (menu-bar-mode -1) ; remove menu bar
   (global-display-line-numbers-mode 1)
 
+  ;;no dialog box
+  (setq use-dialog-box nil)
+  ;; lifes to short to type yes
+  (defalias 'yes-or-no-p 'y-or-n-p)
+
   ;; enable recent files
   (recentf-mode 1)
   (setq recentf-max-menu-items 25)
@@ -297,17 +302,6 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
     (interactive)
     (find-file "~/.emacs.d/config.org"))
 
-  (defun er-sudo-edit (&optional arg)
-  "Edit currently visited file as root.
-
-  With a prefix ARG prompt for a file to visit.
-  Will also prompt for a file to visit if current
-  buffer is not visiting a file."
-  (interactive "P")
-  (if (or arg (not buffer-file-name))
-      (find-file (concat "/sudo:root@localhost:"
-  			 (ido-read-file-name "Find file(as root): ")))
-    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 #+end_src
 
 ** which key
