@@ -58,6 +58,37 @@ This I will keep in the init.el for now though so it loads first.
 
 #+end_src
 
+**  perspective mode
+
+#+begin_quote
+s — persp-switch: Query a perspective to switch to, or create
+` — persp-switch-by-number: Switch to perspective by number, or switch quickly using numbers 1, 2, 3.. 0 as prefix args; note this will probably be most useful with persp-sort set to 'created
+k — persp-remove-buffer: Query a buffer to remove from current perspective
+c — persp-kill : Query a perspective to kill
+r — persp-rename: Rename current perspective
+a — persp-add-buffer: Query an open buffer to add to current perspective
+A — persp-set-buffer: Add buffer to current perspective and remove it from all others
+b - persp-switch-to-buffer: Like switch-to-buffer; includes all buffers from all perspectives; changes perspective if necessary
+i — persp-import: Import a given perspective from another frame.
+n, <right> — persp-next: Switch to next perspective
+p, <left> — persp-prev: Switch to previous perspective
+m — persp-merge: Temporarily merge the buffers from one perspective into another
+u — persp-unmerge: Undo the effects of a persp-merge
+g — persp-add-buffer-to-frame-global: Add buffer to a frame-specific "global" perspective
+C-s — persp-state-save: Save all perspectives in all frames to a file
+C-l — persp-state-load: Load all perspectives from a file
+#+end_quote
+
+#+begin_src emacs-lisp
+(use-package perspective
+  :bind
+  ("C-x C-b" . persp-list-buffers)         ; or use a nicer switcher, see below
+  :custom
+  (persp-mode-prefix-key (kbd "C-c M-p"))  ; pick your own prefix key here
+  :init
+  (persp-mode))
+#+end_src
+
 ** Emacs as IDE
 [[https://ianyepan.github.io/posts/emacs-ide/][General tips on how to make emacs a good ide]]
 *** Language server protocol (lsp-mode)
@@ -221,7 +252,7 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
   (require 'general)
 
   (general-create-definer my-leader-def
-    :states '(normal motion)
+    :states '(normal emacs motion)
     :keymaps 'override
     :prefix "SPC"
     )
@@ -232,8 +263,8 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
 
   ;; magit uses emacs mode so emacs is important to override magit
   (my-leader-def
-    :states '(emacs normal)
-    :keymaps 'override
+    ;;:states '(emacs normal)
+    ;;:keymaps 'override
     ;; files
     "f s" 'save-buffer
     "." 'find-file
@@ -279,6 +310,12 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
     "t t" 'treemacs
     "t DEL" 'treemacs-root-up
     "t RET" 'treemacs-root-down
+#+end_src
+
+*** pers mode keybindings
+#+begin_src emacs-lisp
+    ;; perspective mode
+    "p" 'perspective-map
     )
 #+end_src
 
