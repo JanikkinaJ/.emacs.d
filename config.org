@@ -1,5 +1,25 @@
 #+TITLE: My Emacs Configuration
 #+PROPERTY: header-args :tangle config.el
+#+OPTIONS: toc:2
+
+** TABLE OF CONTENT :toc:
+  - [[#info][INFO]]
+  - [[#package-management][Package management]]
+  - [[#basic-changes][Basic changes]]
+  - [[#toc-for-org][toc for org]]
+  - [[#theme][Theme]]
+  - [[#doom-modeline][doom modeline]]
+  - [[#evil-vim][evil vim]]
+  -  [[#perspective-mode][perspective mode]]
+  - [[#emacs-as-ide][Emacs as IDE]]
+  - [[#flycheck][flycheck]]
+  - [[#ivy-completion][Ivy (completion)]]
+  - [[#vterm][vterm]]
+  - [[#magit][magit]]
+  - [[#personal-functions][Personal functions]]
+  - [[#which-key][which key]]
+  - [[#windswap][Windswap]]
+  - [[#keybindings][Keybindings]]
 
 ** INFO
 create source blocks with ~org-insert-structure-template~ Keybinding: ~(C-c C-,)~
@@ -30,6 +50,18 @@ This I will keep in the init.el for now though so it loads first.
   (setq org-src-tab-acts-natively t)
 #+end_src
 
+** toc for org
+#+begin_src emacs-lisp
+
+  (use-package toc-org)
+  (add-hook 'org-mode-hook 'toc-org-mode)
+  (setq org-return-follows-link t)
+  ;; enable in markdown, too
+  ;;(add-hook 'markdown-mode-hook 'toc-org-mode)
+  ;;(define-key markdown-mode-map (kbd "\C-c\C-o") 'toc-org-markdown-follow-thing-at-point)
+
+#+end_src
+
 ** Theme
 #+begin_src emacs-lisp 
   ;; theme
@@ -52,18 +84,18 @@ https://github.com/seagle0128/doom-modeline
 
 ** evil vim
 #+begin_src emacs-lisp 
-  ;; ======== https://github.com/emacs-evil/evil
-  ;; evil vim
-  ;; ========
-(use-package evil
-     :init (setq evil-want-C-i-jump nil)
-     :config (evil-mode))
+    ;; https://github.com/emacs-evil/evil
+  (use-package evil
+       :init (setq evil-want-C-i-jump nil)
+       :config (evil-mode))
 
   ;; required packages
   (use-package goto-chg)
   (require 'evil)
   (evil-mode 1)
-
+  (with-eval-after-load 'evil-maps
+    (define-key evil-motion-state-map (kbd "SPC") nil)
+    (define-key evil-motion-state-map (kbd "RET") nil))
 #+end_src
 
 **  perspective mode
