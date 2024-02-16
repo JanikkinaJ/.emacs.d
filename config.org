@@ -16,6 +16,7 @@
   - [[#emacs-as-ide][Emacs as IDE]]
   - [[#flycheck][flycheck]]
   - [[#ivy-completion][Ivy (completion)]]
+  - [[#shackle][Shackle]]
   - [[#vterm][vterm]]
   - [[#magit][magit]]
   - [[#personal-functions][Personal functions]]
@@ -253,14 +254,28 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
   (setq ivy-initial-inputs-alist nil) ;; removes annoying ^ from commands
 #+end_src
 
+** Shackle
+#+begin_src emacs-lisp
+  (use-package shackle
+    :custom
+    (shackle-rules '(
+  		   ;;(vterm-mode :align right :size 0.4 :select t)
+  		   (".*vterm.*" :regexp t :popup t :select t :align bottom)
+
+                     ;; TODO: Find a way to have this open in the current window
+                     ;; iff there is no other window in the frame
+                     (magit-status-mode :select t :other t :size 0.4)
+                     (compilation-mode :align right :size 0.3 :other t :inhibit-window-quit)))
+    :config
+    (shackle-mode t))
+#+end_src
+
 ** vterm
 #+begin_src emacs-lisp
    (use-package vterm
    :ensure t)
   ;; ensure that vterm has no line numbers
-
   (add-hook 'vterm-mode-hook (lambda() (display-line-numbers-mode -1))) 
-  (use-package vterm-toggle) ;; better vterm behaviour https://github.com/jixiuf/vterm-toggle
 #+end_src
 
 ** magit
@@ -276,8 +291,8 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
     (load-file "~/.emacs.d/init.el"))
 
   (defun edit-config ()
-    (interactive
-    (find-file "~/.emacs.d/config.org")))
+    (interactive)
+    (find-file "~/.emacs.d/config.org"))
 
   (defun er-sudo-edit (&optional arg)
   "Edit currently visited file as root.
@@ -288,7 +303,7 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
   (interactive "P")
   (if (or arg (not buffer-file-name))
       (find-file (concat "/sudo:root@localhost:"
-			 (ido-read-file-name "Find file(as root): ")))
+  			 (ido-read-file-name "Find file(as root): ")))
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 #+end_src
 
@@ -362,7 +377,7 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
 *** vterm keybindings
 #+begin_src emacs-lisp 
     ;; vterm
-    "o t" 'vterm-toggle-cd
+    "o t" 'vterm
 #+end_src
 
 *** magit keybindings
