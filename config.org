@@ -12,7 +12,7 @@
   - [[#theme][Theme]]
   - [[#doom-modeline][doom modeline]]
   - [[#evil-vim][evil vim]]
-  -  [[#perspective-mode][perspective mode]]
+  - [[#perspective-mode][perspective mode]]
   - [[#emacs-as-ide][Emacs as IDE]]
   - [[#flycheck][flycheck]]
   - [[#ivy-completion][Ivy (completion)]]
@@ -51,6 +51,10 @@ This I will keep in the init.el for now though so it loads first.
 
   ;;(setq org-src-preserve-indentation t)
   (setq org-src-tab-acts-natively t)
+
+  ;; smooth scrolling
+   (setq scroll-conservatively 10000
+   scroll-preserve-screen-position 1) 
 #+end_src
 
 ** org mode
@@ -92,10 +96,10 @@ Even though org mode is preinstalled this ensures there is no org mode mismatch
 #+begin_src emacs-lisp 
   ;; theme
   (use-package doom-themes) ;; https://github.com/doomemacs/themes/tree/screenshots
-  ;; (load-theme 'doom-oceanic-next t)
+  (load-theme 'doom-oceanic-next t)
   ;; (load-theme 'doom-molokai t)
   ;; (load-theme 'doom-palenight t)
-  (load-theme 'doom-snazzy t)
+  ;; (load-theme 'doom-snazzy t)
   ;; (load-theme 'doom-wilmersdorf t)
   ;; (load-theme 'doom-outrun-electric t)
 #+end_src
@@ -124,7 +128,7 @@ https://github.com/seagle0128/doom-modeline
     (define-key evil-motion-state-map (kbd "RET") nil))
 #+end_src
 
-**  perspective mode
+** perspective mode
 
 - ~s~          : persp-switch: Query a perspective to switch to, or create
 - ~`~          : persp-switch-by-number: Switch to perspective by number, or switch quickly using numbers 1, 2, 3.. 0 as prefix args; note this will probably be most useful with persp-sort set to 'created
@@ -272,6 +276,9 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
   ;; ensure that vterm has no line numbers
   (add-hook 'vterm-mode-hook (lambda() (display-line-numbers-mode -1))) 
   (use-package vterm-toggle)
+  ;; automatically insert mode vterm
+  (with-eval-after-load 'evil
+  (evil-set-initial-state 'vterm-mode 'insert))
 #+end_src
 
 ** magit
