@@ -260,12 +260,11 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
     :custom
     (shackle-rules '(
   		   ;;(vterm-mode :align right :size 0.4 :select t)
-  		   (".*vterm.*" :regexp t :popup t :select t :align bottom)
+  		   (".*vterm.*" :regexp t :popup t :select t :align bottom :size 0.4)
 
                      ;; TODO: Find a way to have this open in the current window
                      ;; iff there is no other window in the frame
-                     (magit-status-mode :select t :other t :size 0.4)
-                     (compilation-mode :align right :size 0.3 :other t :inhibit-window-quit)))
+                     (".*magit:.*" :regexp t :popup t :select t :align right :size 0.4)))
     :config
     (shackle-mode t))
 #+end_src
@@ -276,6 +275,7 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
    :ensure t)
   ;; ensure that vterm has no line numbers
   (add-hook 'vterm-mode-hook (lambda() (display-line-numbers-mode -1))) 
+  (use-package vterm-toggle)
 #+end_src
 
 ** magit
@@ -377,7 +377,7 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
 *** vterm keybindings
 #+begin_src emacs-lisp 
     ;; vterm
-    "o t" 'vterm
+    "o t" 'vterm-toggle-cd
 #+end_src
 
 *** magit keybindings
