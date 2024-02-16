@@ -18,6 +18,7 @@ This I will keep in the init.el for now though so it loads first.
   ;; change the look
   (tool-bar-mode -1) ; remove tool bar
   (scroll-bar-mode -1) ; remove scroll bar
+  (menu-bar-mode -1) ; remove menu bar
   (global-display-line-numbers-mode 1)
   (set-face-attribute 'default nil :height 170) ;;(height / 10 = normal font)
 
@@ -26,14 +27,19 @@ This I will keep in the init.el for now though so it loads first.
   (setq recentf-max-menu-items 25)
   (setq recentf-max-saved-items 25)
 
-  ;;(setq org-src-preserve-indentation t)
+  (setq org-src-preserve-indentation t)
 #+end_src
 
 ** Theme
 #+begin_src emacs-lisp 
   ;; theme
-  (use-package doom-themes)
-  (load-theme 'doom-moonlight t)
+  (use-package doom-themes) ;; https://github.com/doomemacs/themes/tree/screenshots
+  ;; (load-theme 'doom-oceanic-next t)
+  ;; (load-theme 'doom-molokai t)
+  ;; (load-theme 'doom-palenight t)
+  (load-theme 'doom-snazzy t)
+  ;; (load-theme 'doom-wilmersdorf t)
+  ;; (load-theme 'doom-outrun-electric t)
 #+end_src
 
 ** evil vim
@@ -52,6 +58,91 @@ This I will keep in the init.el for now though so it loads first.
 
 #+end_src
 
+** Emacs as IDE
+[[https://ianyepan.github.io/posts/emacs-ide/][General tips on how to make emacs a good ide]]
+*** Language server protocol (lsp-mode)
+
+# arch link https://wiki.archlinux.org/title/Language_Server_Protocol
+I have disabled many annoying functions of lsp-ui
+Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/ 
+
+#+begin_src emacs-lisp
+  ;; https://emacs-lsp.github.io/lsp-mode/page/installation/
+  (use-package lsp-mode
+  :hook ((c-mode          ; clangd
+	  c++-mode        ; clangd
+	  c-or-c++-mode   ; clangd
+	  java-mode       ; eclipse-jdtls
+	  js-mode         ; ts-ls (tsserver wrapper)
+	  js-jsx-mode     ; ts-ls (tsserver wrapper)
+	  typescript-mode ; ts-ls (tsserver wrapper)
+	  python-mode     ; pyright
+	  web-mode        ; ts-ls/HTML/CSS
+	  haskell-mode    ; haskell-language-server
+	  ) . lsp-deferred)
+  :commands lsp
+  :config
+  (setq lsp-auto-guess-root t)
+  (setq lsp-log-io nil)
+  (setq lsp-restart 'auto-restart)
+  (setq lsp-enable-symbol-highlighting nil)
+  (setq lsp-enable-on-type-formatting nil)
+  (setq lsp-signature-auto-activate nil)
+  (setq lsp-signature-render-documentation nil)
+  (setq lsp-eldoc-hook nil)
+  (setq lsp-modeline-code-actions-enable nil)
+  (setq lsp-modeline-diagnostics-enable nil)
+  (setq lsp-headerline-breadcrumb-enable nil)
+  (setq lsp-semantic-tokens-enable nil)
+  (setq lsp-enable-folding nil)
+  (setq lsp-enable-imenu nil)
+  (setq lsp-enable-snippet nil)
+  (setq read-process-output-max (* 1024 1024)) ;; 1MB
+  (setq lsp-idle-delay 0.5))
+
+  (use-package lsp-ui
+  :commands lsp-ui-mode
+  :config
+  (setq lsp-ui-sideline-show-diagnostics t)
+  (setq lsp-ui-doc-enable t)
+  (setq lsp-ui-doc-show-with-cursor t)
+  (setq lsp-ui-doc-show-with-mouse nil)
+  (setq lsp-ui-sideline-delay 0.05))
+  (setq lsp-lens-enable nil)
+  (setq lsp-headerline-breadcrumb-enable nil)
+  (setq lsp-ui-sideline-enable t)
+#+end_src
+
+** flycheck
+#+begin_src emacs-lisp
+  (use-package flycheck
+  :ensure t
+  :config
+  (add-hook 'after-init-hook #'global-flycheck-mode))
+#+end_src
+
+*** python
+#+begin_src emacs-lisp
+  (use-package lsp-pyright
+  :hook (python-mode . (lambda () (require 'lsp-pyright)))
+  :init (when (executable-find "python3")
+          (setq lsp-pyright-python-executable-cmd "python3")))
+#+end_src
+
+*** java
+#+begin_src emacs-lisp
+  (use-package lsp-java
+  :after lsp)
+#+end_src
+
+#+begin_src emacs-lisp
+  ;; http://company-mode.github.io/
+  (use-package company)
+  (require 'company)
+  (add-hook 'after-init-hook 'global-company-mode)
+#+end_src
+
+
 ** Ivy (completion)
 #+begin_src emacs-lisp
   ;; Ivy (completion) https://github.com/abo-abo/swiper
@@ -67,8 +158,8 @@ This I will keep in the init.el for now though so it loads first.
    :ensure t)
   ;; ensure that vterm has no line numbers
 
-
   (add-hook 'vterm-mode-hook (lambda() (display-line-numbers-mode -1))) 
+  (use-package vterm-toggle) ;; better vterm behaviour https://github.com/jixiuf/vterm-toggle
 #+end_src
 
 ** magit
@@ -86,6 +177,18 @@ This I will keep in the init.el for now though so it loads first.
   (defun edit-config ()
     (interactive
     (find-file "~/.emacs.d/config.org")))
+
+  (defun er-sudo-edit (&optional arg)
+  "Edit currently visited file as root.
+
+  With a prefix ARG prompt for a file to visit.
+  Will also prompt for a file to visit if current
+  buffer is not visiting a file."
+  (interactive "P")
+  (if (or arg (not buffer-file-name))
+      (find-file (concat "/sudo:root@localhost:"
+			 (ido-read-file-name "Find file(as root): ")))
+    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 #+end_src
 
 ** which key
@@ -122,6 +225,10 @@ This I will keep in the init.el for now though so it loads first.
     :keymaps 'override
     :prefix "SPC"
     )
+#+end_src
+
+*** file keybindings  
+#+begin_src emacs-lisp 
 
   ;; magit uses emacs mode so emacs is important to override magit
   (my-leader-def
@@ -130,7 +237,12 @@ This I will keep in the init.el for now though so it loads first.
     ;; files
     "f s" 'save-buffer
     "." 'find-file
+    "f f" 'er-sudo-edit
     "f r" 'recentf-open
+#+end_src
+
+*** window keybindings
+#+begin_src emacs-lisp 
     ;; window commands
     "w d" 'evil-window-delete
     "w H" 'evil-window-split 
@@ -139,16 +251,39 @@ This I will keep in the init.el for now though so it loads first.
     "w k" 'evil-window-down
     "w h" 'evil-window-left
     "w l" 'evil-window-right
+#+end_src
+
+*** config keybindings
+#+begin_src emacs-lisp 
     ;; config commands
     "c r" 'reload-config
     "c e" 'edit-config
+#+end_src
+*** vterm keybindings
+#+begin_src emacs-lisp 
     ;; vterm
-    "o t" 'vterm-other-window
+    "o t" 'vterm-toggle-cd
+#+end_src
+
+*** magit keybindings
+#+begin_src emacs-lisp 
+    ;; magit
     "g g" 'magit-status
     "g d" 'magit-dispatch
     "g f" 'magit-file-dispatch
-    )
+#+end_src
 
+*** treemacs keybindings
+#+begin_src emacs-lisp 
+    ;;treemacs
+    "t t" 'treemacs
+    "t DEL" 'treemacs-root-up
+    "t RET" 'treemacs-root-down
+    )
+#+end_src
+
+*** treemacs which key descriptors
+#+begin_src emacs-lisp 
   ;; change which key description
   (which-key-add-key-based-replacements
     "SPC f" "files")
@@ -158,6 +293,11 @@ This I will keep in the init.el for now though so it loads first.
     "SPC w" "window")
   (which-key-add-key-based-replacements
     "SPC o" "vterm")
+  (which-key-add-key-based-replacements
+    "SPC g" "magit")
+  (which-key-add-key-based-replacements
+    "SPC t" "treemacs")
+
 #+end_src
 
 ;;; Local Variables: ***
