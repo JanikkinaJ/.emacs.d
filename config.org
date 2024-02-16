@@ -6,7 +6,9 @@
   - [[#info][INFO]]
   - [[#package-management][Package management]]
   - [[#basic-changes][Basic changes]]
+  - [[#org-mode][org mode]]
   - [[#toc-for-org][toc for org]]
+  - [[#org-roam][org roam]]
   - [[#theme][Theme]]
   - [[#doom-modeline][doom modeline]]
   - [[#evil-vim][evil vim]]
@@ -50,6 +52,12 @@ This I will keep in the init.el for now though so it loads first.
   (setq org-src-tab-acts-natively t)
 #+end_src
 
+** org mode
+Even though org mode is preinstalled this ensures there is no org mode mismatch
+#+begin_src emacs-lisp
+  (use-package org)
+#+end_src
+
 ** toc for org
 #+begin_src emacs-lisp
 
@@ -60,6 +68,23 @@ This I will keep in the init.el for now though so it loads first.
   ;;(add-hook 'markdown-mode-hook 'toc-org-mode)
   ;;(define-key markdown-mode-map (kbd "\C-c\C-o") 'toc-org-markdown-follow-thing-at-point)
 
+#+end_src
+
+** org roam
+[[https://github.com/bastibe/org-journal][org journal github]] is not being used, instead org roam dailies
+
+#+begin_src emacs-lisp
+  (use-package org-roam
+    :ensure t
+    :init
+    (setq org-roam-v2-ack t) ;;acknowledges that version 2 of org roam is being used
+    :custom
+    (org-roam-directory "~/Sync/org/roam/")
+    (org-roam-completion-everywhere t)
+    ;; add keybindings here
+    :config
+    (require 'org-roam-dailies)
+    (org-roam-db-autosync-mode))
 #+end_src
 
 ** Theme
@@ -356,6 +381,16 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
     "t RET" 'treemacs-root-down
 #+end_src
 
+*** org roam
+#+begin_src emacs-lisp
+    "r n f" 'org-roam-node-find
+    "r n i" 'org-roam-node-insert
+    "r b t" 'org-roam-buffer-toggle
+    "r d y" 'org-roam-dailies-capture-yesterday
+    "r d t" 'org-roam-dailies-capture-tomorrow
+    "r d n" 'org-roam-dailies-capture-today
+#+end_src
+
 *** pers mode keybindings
 #+begin_src emacs-lisp
     ;; perspective mode
@@ -365,19 +400,27 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
 
 *** treemacs which key descriptors
 #+begin_src emacs-lisp 
-  ;; change which key description
-  (which-key-add-key-based-replacements
-    "SPC f" "files")
-  (which-key-add-key-based-replacements
-    "SPC c" "config")
-  (which-key-add-key-based-replacements
-    "SPC w" "window")
-  (which-key-add-key-based-replacements
-    "SPC o" "vterm")
-  (which-key-add-key-based-replacements
-    "SPC g" "magit")
-  (which-key-add-key-based-replacements
-    "SPC t" "treemacs")
+    ;; change which key description
+    (which-key-add-key-based-replacements
+      "SPC f" "files")
+    (which-key-add-key-based-replacements
+      "SPC c" "config")
+    (which-key-add-key-based-replacements
+      "SPC w" "window")
+    (which-key-add-key-based-replacements
+      "SPC o" "vterm")
+    (which-key-add-key-based-replacements
+      "SPC g" "magit")
+    (which-key-add-key-based-replacements
+      "SPC t" "treemacs")
+    (which-key-add-key-based-replacements
+      "SPC r" "org-roam")
+    (which-key-add-key-based-replacements
+      "SPC r d" "roam-dailies")
+    (which-key-add-key-based-replacements
+      "SPC r n" "roam node")
+    (which-key-add-key-based-replacements
+      "SPC r b" "roam buffer")
 #+end_src
 
 ;;; Local Variables: ***

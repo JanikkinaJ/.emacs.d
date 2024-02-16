@@ -6,3 +6,8 @@ straight
 config.el
 transient
 tramp
+org-roam.db
+elpa
+.cache/
+*#
+.lsp-*
