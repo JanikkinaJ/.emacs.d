@@ -293,7 +293,7 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
 
 ** Personal functions
 #+begin_src emacs-lisp
-  ;; personal functions
+    ;; personal functions
   (defun reload-config ()
     (interactive)
     (load-file "~/.emacs.d/init.el"))
@@ -302,6 +302,11 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
     (interactive)
     (find-file "~/.emacs.d/config.org"))
 
+  (defun sudo-find-file (file-name)
+    "Like find file, but opens the file as root."
+    (interactive "FSudo Find File: ")
+    (let ((tramp-file-name (concat "/sudo::" (expand-file-name file-name))))
+      (find-file tramp-file-name)))
 #+end_src
 
 ** which key
