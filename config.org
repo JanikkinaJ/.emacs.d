@@ -25,6 +25,11 @@
   - [[#keybindings][Keybindings]]
 
 ** INFO
+This is a personal emacs config that has been inspired by using doom emacs for a long length of time.
+It only has what I currently use and I have attempted to make it easy to understand.
+But it is just a repo made for personal use.
+
+*** Org babel
 create source blocks with ~org-insert-structure-template~ Keybinding: ~(C-c C-,)~
 ~C-c C-c~ on tangle header activates it if it isn't working.
 To edit the current source block in new buffer use ~C-c '~
@@ -107,6 +112,7 @@ Even though org mode is preinstalled this ensures there is no org mode mismatch
   ;; (load-theme 'doom-snazzy t)
   ;; (load-theme 'doom-wilmersdorf t)
   ;; (load-theme 'doom-outrun-electric t)
+  (doom-themes-visual-bell-config)
 #+end_src
 
 ** doom modeline
