@@ -138,6 +138,15 @@ https://github.com/seagle0128/doom-modeline
     (define-key evil-motion-state-map (kbd "SPC") nil)
     (define-key evil-motion-state-map (kbd "RET") nil))
 #+end_src
+*** evil collection
+#+begin_src emacs-lisp
+  ;; enhanced compatibility with certain programms such as vterm https://github.com/emacs-evil/evil-collection
+  (use-package evil-collection
+    :after evil
+    :ensure t
+    :config
+    (evil-collection-init)) ;; there is a more precise way of enabling this, this enables for all
+#+end_src
 
 ** perspective mode
 
