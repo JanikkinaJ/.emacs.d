@@ -7,6 +7,7 @@
   - [[#package-management][Package management]]
   - [[#basic-changes][Basic changes]]
   - [[#org-mode][org mode]]
+  - [[#org-babel][org babel]]
   - [[#toc-for-org][toc for org]]
   - [[#org-roam][org roam]]
   - [[#theme][Theme]]
@@ -30,7 +31,7 @@ This is a personal emacs config that has been inspired by using doom emacs for a
 It only has what I currently use and I have attempted to make it easy to understand.
 But it is just a repo made for personal use.
 
-*** Org babel
+*** Org babel basics
 create source blocks with ~org-insert-structure-template~ Keybinding: ~(C-c C-,)~
 ~C-c C-c~ on tangle header activates it if it isn't working.
 To edit the current source block in new buffer use ~C-c '~
@@ -73,6 +74,12 @@ This I will keep in the init.el for now though so it loads first.
 Even though org mode is preinstalled this ensures there is no org mode mismatch
 #+begin_src emacs-lisp
   (use-package org)
+#+end_src
+
+** org babel
+#+begin_src emacs-lisp
+(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.5))
+  
 #+end_src
 
 ** toc for org
@@ -128,12 +135,13 @@ https://github.com/seagle0128/doom-modeline
 ** evil vim
 #+begin_src emacs-lisp 
     ;; https://github.com/emacs-evil/evil
+  (setq evil-want-keybinding nil) ;; warning if not present
   (use-package evil
        :init (setq evil-want-C-i-jump nil)
-             (setq evil-want-keybinding nil) ;; warning if not present
        :config (evil-mode))
   (setq evil-respect-visual-line-mode t)
   (setq evil-want-c-i-jump t)
+
 
   ;; required packages
   (use-package goto-chg)
@@ -448,6 +456,14 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
     "r d g" 'org-roam-dailies-goto-today
 #+end_src
 
+*** org babel keybindings
+
+#+begin_src emacs-lisp
+    "b p" 'org-latex-preview 
+    "b b" 'org-babel-execute-buffer
+    "b s" 'org-babel-execute-src-block
+#+end_src
+
 *** pers mode keybindings
 #+begin_src emacs-lisp
     ;; perspective mode
@@ -478,6 +494,8 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
       "SPC r n" "roam node")
     (which-key-add-key-based-replacements
       "SPC r b" "roam buffer")
+    (which-key-add-key-based-replacements
+      "SPC b" "org-babel")
 #+end_src
 
 ;;; Local Variables: ***
