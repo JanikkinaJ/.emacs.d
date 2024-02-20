@@ -8,7 +8,7 @@ transient
 tramp
 org-roam.db
 elpa
-.cache/
+*cache/
 *#
 .lsp-*
 .org-id-locations
