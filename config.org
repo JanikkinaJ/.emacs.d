@@ -131,6 +131,7 @@ https://github.com/seagle0128/doom-modeline
     ;; https://github.com/emacs-evil/evil
   (use-package evil
        :init (setq evil-want-C-i-jump nil)
+             (setq evil-want-keybinding nil)
        :config (evil-mode))
   (setq evil-respect-visual-line-mode t)
   (setq evil-want-c-i-jump t)
