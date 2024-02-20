@@ -18,6 +18,7 @@
   - [[#ivy-completion][Ivy (completion)]]
   - [[#shackle][Shackle]]
   - [[#vterm][vterm]]
+  - [[#eshell][eshell]]
   - [[#magit][magit]]
   - [[#personal-functions][Personal functions]]
   - [[#which-key][which key]]
@@ -62,6 +63,8 @@ This I will keep in the init.el for now though so it loads first.
   ;;(setq org-src-preserve-indentation t)
   (setq org-src-tab-acts-natively t)
 
+  ;;visual line mode
+  (global-visual-line-mode t)
   ;; smooth scrolling
    (setq scroll-conservatively 10000
    scroll-preserve-screen-position 1) 
@@ -129,6 +132,8 @@ https://github.com/seagle0128/doom-modeline
   (use-package evil
        :init (setq evil-want-C-i-jump nil)
        :config (evil-mode))
+  (setq evil-respect-visual-line-mode t)
+  (setq evil-want-c-i-jump t)
 
   ;; required packages
   (use-package goto-chg)
@@ -189,16 +194,17 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
   ;; https://emacs-lsp.github.io/lsp-mode/page/installation/
   (use-package lsp-mode
   :hook ((c-mode          ; clangd
-	  c++-mode        ; clangd
-	  c-or-c++-mode   ; clangd
-	  java-mode       ; eclipse-jdtls
-	  js-mode         ; ts-ls (tsserver wrapper)
-	  js-jsx-mode     ; ts-ls (tsserver wrapper)
-	  typescript-mode ; ts-ls (tsserver wrapper)
-	  python-mode     ; pyright
-	  web-mode        ; ts-ls/HTML/CSS
-	  haskell-mode    ; haskell-language-server
-	  ) . lsp-deferred)
+  	  c++-mode        ; clangd
+  	  c-or-c++-mode   ; clangd
+  	  java-mode       ; eclipse-jdtls
+  	  js-mode         ; ts-ls (tsserver wrapper)
+  	  js-jsx-mode     ; ts-ls (tsserver wrapper)
+  	  typescript-mode ; ts-ls (tsserver wrapper)
+  	  python-mode     ; pyright
+  	  web-mode        ; ts-ls/HTML/CSS
+  	  haskell-mode    ; haskell-language-server
+  	  rust-mode
+  	  ) . lsp-deferred)
   :commands lsp
   :config
   (setq lsp-auto-guess-root t)
@@ -224,8 +230,8 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
   :config
   (setq lsp-ui-sideline-show-diagnostics t)
   (setq lsp-ui-doc-enable t)
-  (setq lsp-ui-doc-show-with-cursor t)
-  (setq lsp-ui-doc-show-with-mouse nil)
+  (setq lsp-ui-doc-show-with-cursor nil)
+  (setq lsp-ui-doc-show-with-mouse t)
   (setq lsp-ui-sideline-delay 0.05))
   (setq lsp-lens-enable nil)
   (setq lsp-headerline-breadcrumb-enable nil)
@@ -252,6 +258,12 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
 #+begin_src emacs-lisp
   (use-package lsp-java
   :after lsp)
+#+end_src
+
+*** rust
+#+begin_src emacs-lisp
+  (use-package rust-mode
+    :after lsp)
 #+end_src
 
 *** enable docker syntax highlighting
@@ -284,7 +296,7 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
     :custom
     (shackle-rules '(
   		   (".*vterm.*" :regexp t :popup t :select t :align bottom :size 0.4)
-                     (".*magit:.*" :regexp t :popup t :select t :align right :size 0.4)))
+                     (".*magit:.*" :regexp t :popup t :select t :align right :size 0.5)))
     :config
     (shackle-mode t))
 #+end_src
@@ -296,14 +308,23 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
   ;; ensure that vterm has no line numbers
   (add-hook 'vterm-mode-hook (lambda() (display-line-numbers-mode -1))) 
   (use-package vterm-toggle)
+
+  (use-package multi-vterm
+    :config
+    (setq multi-vterm-dedicated-window-height-percent 30))
   ;; automatically insert mode vterm
-  (with-eval-after-load 'evil
-  (evil-set-initial-state 'vterm-mode 'insert))
+  ;;(with-eval-after-load 'evil)
+  ;;(evil-set-initial-state 'vterm-mode 'insert))
+#+end_src
+
+** eshell
+#+begin_src emacs-lisp
+  (add-hook 'eshell-mode-hook (lambda() (display-line-numbers-mode -1))) 
 #+end_src
 
 ** magit
 #+begin_src emacs-lisp
-    (use-package magit)
+  (use-package magit)
 #+end_src
 
 ** Personal functions
@@ -393,8 +414,11 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
 #+end_src
 *** vterm keybindings
 #+begin_src emacs-lisp 
-    ;; vterm
-    "o t" 'vterm-toggle-cd
+  ;; vterm
+  "o t" 'vterm-toggle-cd
+  "o c" 'multi-vterm ;; create new vterm
+  "o n" 'multi-vterm-next ;; next vterm
+  "o p" 'multi-vterm-prev
 #+end_src
 
 *** magit keybindings
