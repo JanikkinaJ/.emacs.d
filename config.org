@@ -10,6 +10,9 @@
   - [[#org-babel][org babel]]
   - [[#toc-for-org][toc for org]]
   - [[#org-roam][org roam]]
+  - [[#markdown][Markdown]]
+  - [[#nix-as-in-nixos][nix (as in nixos)]]
+  - [[#yaml][Yaml]]
   - [[#theme][Theme]]
   - [[#doom-modeline][doom modeline]]
   - [[#evil-vim][evil vim]]
@@ -111,6 +114,68 @@ Even though org mode is preinstalled this ensures there is no org mode mismatch
     (org-roam-db-autosync-mode))
 #+end_src
 
+** Markdown
+#+begin_src emacs-lisp
+  ;; hide/show markup 
+   (defvar nb/current-line '(0 . 0)
+     "(start . end) of current line in current buffer")
+   (make-variable-buffer-local 'nb/current-line)
+
+  (defun nb/unhide-current-line (limit)
+    "Font-lock function"
+    (let ((start (max (point) (car nb/current-line)))
+          (end (min limit (cdr nb/current-line))))
+      (when (< start end)
+        (remove-text-properties start end
+                        '(invisible t display "" composition ""))
+        (goto-char limit)
+        t)))
+
+  (defun nb/refontify-on-linemove ()
+    "Post-command-hook"
+    (let* ((start (line-beginning-position))
+           (end (line-beginning-position 2))
+           (needs-update (not (equal start (car nb/current-line)))))
+      (setq nb/current-line (cons start end))
+      (when needs-update
+        (font-lock-fontify-block 3))))
+
+  (defun nb/markdown-unhighlight ()
+    "Enable markdown concealling"
+    (interactive)
+    (markdown-toggle-markup-hiding 'toggle)
+    (font-lock-add-keywords nil '((nb/unhide-current-line)) t)
+    (add-hook 'post-command-hook #'nb/refontify-on-linemove nil t))
+
+  (add-hook 'markdown-mode-hook #'nb/markdown-unhighlight)
+
+  ;; scale headings
+  (setq markdown-header-scaling t)
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(markdown-header-face-1 ((t (:inherit markdown-header-face :foreground "green" :height 1.4))))
+   '(markdown-header-face-2 ((t (:inherit markdown-header-face :foreground "light green" :height 1.2))))
+   '(markdown-header-face-3 ((t (:inherit markdown-header-face :foreground "dark orange" :height 1.0))))
+   '(markdown-header-face-4 ((t (:inherit markdown-header-face :foreground "dark cyan" :height 1.0)))))
+#+end_src
+
+** nix (as in nixos)
+#+begin_src emacs-lisp
+  (use-package nix-mode
+  :mode ("\\.nix\\'" "\\.nix.in\\'"))
+#+end_src
+
+** Yaml
+#+begin_src emacs-lisp
+  (use-package yaml-mode)
+  (add-hook 'yaml-mode-hook
+            (lambda ()
+              (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+#+end_src
+
 ** Theme
 #+begin_src emacs-lisp 
   ;; theme
@@ -136,12 +201,11 @@ https://github.com/seagle0128/doom-modeline
 #+begin_src emacs-lisp 
     ;; https://github.com/emacs-evil/evil
   (setq evil-want-keybinding nil) ;; warning if not present
+  (setq evil-respect-visual-line-mode t)
   (use-package evil
        :init (setq evil-want-C-i-jump nil)
        :config (evil-mode))
-  (setq evil-respect-visual-line-mode t)
   (setq evil-want-c-i-jump t)
-
 
   ;; required packages
   (use-package goto-chg)
@@ -304,7 +368,7 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
     :custom
     (shackle-rules '(
   		   (".*vterm.*" :regexp t :popup t :select t :align bottom :size 0.4)
-                     (".*magit:.*" :regexp t :popup t :select t :align right :size 0.5)))
+                     (".*magit.*" :regexp t :popup t :select t :align right :size 0.5)))
     :config
     (shackle-mode t))
 #+end_src
@@ -406,12 +470,13 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
 #+begin_src emacs-lisp 
     ;; window commands
     "w d" 'evil-window-delete
-    "w H" 'evil-window-split 
+    "w s" 'evil-window-split 
     "w v" 'evil-window-vsplit
     "w j" 'evil-window-up
     "w k" 'evil-window-down
     "w h" 'evil-window-left
     "w l" 'evil-window-right
+    "w w" 'evil-window-next
 #+end_src
 
 *** config keybindings
@@ -422,11 +487,11 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
 #+end_src
 *** vterm keybindings
 #+begin_src emacs-lisp 
-  ;; vterm
-  "o t" 'vterm-toggle-cd
-  "o c" 'multi-vterm ;; create new vterm
-  "o n" 'multi-vterm-next ;; next vterm
-  "o p" 'multi-vterm-prev
+    ;; vterm
+    "o t" 'vterm-toggle-cd
+    "o c" 'multi-vterm ;; create new vterm
+    "o n" 'multi-vterm-next ;; next vterm
+    "o p" 'multi-vterm-prev
 #+end_src
 
 *** magit keybindings
@@ -454,6 +519,15 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
     "r d t" 'org-roam-dailies-capture-tomorrow
     "r d n" 'org-roam-dailies-capture-today
     "r d g" 'org-roam-dailies-goto-today
+    "r d d" 'org-roam-dailies-goto-date
+    "m l" 'org-insert-link 
+#+end_src
+
+*** org node
+
+#+begin_src emacs-lisp
+    "n r f" 'org-roam-node-find
+    "n r i" 'org-roam-node-insert
 #+end_src
 
 *** org babel keybindings
@@ -462,6 +536,17 @@ Here a diagramm of their functions: https://emacs-lsp.github.io/lsp-mode/tutoria
     "b p" 'org-latex-preview 
     "b b" 'org-babel-execute-buffer
     "b s" 'org-babel-execute-src-block
+#+end_src
+
+*** markdown keybindings
+#+begin_src emacs-lisp
+    "m t" 'nb/markdown-unhighlight
+#+end_src
+
+*** buffer
+
+#+begin_src emacs-lisp
+    "b i" 'ibuffer-list-buffers
 #+end_src
 
 *** pers mode keybindings
