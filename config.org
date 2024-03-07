@@ -45,6 +45,7 @@ This I will keep in the init.el for now though so it loads first.
 
 ** Basic changes
 #+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
   ;; Don't show the splash screen
   (setq inhibit-startup-message t)
 

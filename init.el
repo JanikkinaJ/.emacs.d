@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 ;; set here to avoid small font when loading
 (add-to-list 'default-frame-alist '(font . "Hack Nerd Font-17" ))
 (set-face-attribute 'default t :font "Hack Nerd Font-17" )
