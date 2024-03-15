@@ -24,6 +24,7 @@
   - [[#corfu][corfu]]
   - [[#ivy-completion--off-][Ivy (completion) -off-]]
   - [[#shackle][Shackle]]
+  - [[#popper][Popper]]
   - [[#vterm][vterm]]
   - [[#eshell][eshell]]
   - [[#magit][magit]]
@@ -478,6 +479,20 @@ in buffer completion
     (shackle-mode t))
 #+end_src
 
+** Popper
+#+begin_src emacs-lisp
+  (use-package popper
+    :init
+    (setq popper-reference-buffers
+          '("\\*Messages\\*"
+            "Output\\*$"
+            "\\*Async Shell Command\\*"
+            help-mode
+            compilation-mode))
+    (popper-mode +1)
+    (popper-echo-mode +1))                ; For echo area hints
+#+end_src
+
 ** vterm
 #+begin_src emacs-lisp
    (use-package vterm
@@ -629,18 +644,23 @@ in buffer completion
 #+end_src
 
 *** org node
-
 #+begin_src emacs-lisp
     "n r f" 'org-roam-node-find
     "n r i" 'org-roam-node-insert
 #+end_src
 
 *** org babel keybindings
-
 #+begin_src emacs-lisp
     "b p" 'org-latex-preview 
     "b b" 'org-babel-execute-buffer
     "b s" 'org-babel-execute-src-block
+#+end_src
+
+*** Popper
+#+begin_src emacs-lisp
+    "l t" 'popper-toggle
+    "l c" 'popper-cycle
+    "l y" 'popper-toggle-type
 #+end_src
 
 *** markdown keybindings
@@ -649,7 +669,6 @@ in buffer completion
 #+end_src
 
 *** buffer
-
 #+begin_src emacs-lisp
     "b i" 'ibuffer-list-buffers
 #+end_src
